@@ -72,6 +72,7 @@ module.exports = function (http) {
 
         //.abort():在接收到响应之前取消异步请求。
         // xhr.abort()
+        return xhr;
     };
 };
 
