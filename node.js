@@ -3,8 +3,7 @@ var http = require('http');
 var data = {key: 'value', hello: 'world'};
 
 var srv = http.createServer(function (req, res) {
-    console.log(req);
-    res.writeHead(200, {'Content-Type': 'Application/Json'});
+    res.writeHead(200, {'Content-Type': 'Application/Json', 'test': 'abc'});
     res.end(JSON.stringify(data));
 });
 

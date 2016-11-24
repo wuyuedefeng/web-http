@@ -1,14 +1,20 @@
 var _getConfig = null;
-function changeStateHandle(tag, code, status) {
+function changeStateHandle(tag, code, status, statusText) {
     var xhr = _getConfig.xhr;
 
+    // .getResponseHeader('name'): 获取相应的响应头部信息。
+    // 参数：name为头部字段名称。返回一个对应的值的字符串。
+    // .getAllResponseHeaders():返回一个包含所有头部信息（key-value）的长字符串。
+    // xhr.getAllResponseHeaders();    //'Content-Type: text/html'
     var contentType = xhr.getResponseHeader('Content-Type');
+
+    // xhr.response为从服务器获取下来的数据。
     var data = xhr.response;
-    if (/json/i.test(contentType)) {
-        data = JSON.parse(data);
-    }
 
     if (tag == 'success') {
+        if (/json/i.test(contentType)) {
+            data = JSON.parse(data);
+        }
         _getConfig.alwaysDo && _getConfig.alwaysDo(false, data);
         _getConfig.successDo && _getConfig.successDo(data);
     } else if (tag == 'error') {
@@ -55,7 +61,7 @@ module.exports = function (http) {
          该方法的调用必须在调用open()方法之后且在调用send()方法之前。
          */
         config.headers = config.headers || {};
-        for(var key in config.headers){
+        for (var key in config.headers) {
             console.log(key);
             xhr.setRequestHeader(key, config.headers[key])
         }

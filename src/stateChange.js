@@ -20,7 +20,7 @@ module.exports = function stateChange(xhr, cb) {
                 cb('success', 4, 200)
             }
             else {
-                cb('error', 4, xmlHttp.status)
+                cb('error', 4, xhr.status, xhr.statusText)
             }
         }
     }

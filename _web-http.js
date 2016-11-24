@@ -8,16 +8,22 @@ window.http = http;
 
 },{"./get":2,"./post":3}],2:[function(require,module,exports){
 var _getConfig = null;
-function changeStateHandle(tag, code, status) {
+function changeStateHandle(tag, code, status, statusText) {
     var xhr = _getConfig.xhr;
 
+    // .getResponseHeader('name'): 获取相应的响应头部信息。
+    // 参数：name为头部字段名称。返回一个对应的值的字符串。
+    // .getAllResponseHeaders():返回一个包含所有头部信息（key-value）的长字符串。
+    // xhr.getAllResponseHeaders();    //'Content-Type: text/html'
     var contentType = xhr.getResponseHeader('Content-Type');
+
+    // xhr.response为从服务器获取下来的数据。
     var data = xhr.response;
-    if (/json/i.test(contentType)) {
-        data = JSON.parse(data);
-    }
 
     if (tag == 'success') {
+        if (/json/i.test(contentType)) {
+            data = JSON.parse(data);
+        }
         _getConfig.alwaysDo && _getConfig.alwaysDo(false, data);
         _getConfig.successDo && _getConfig.successDo(data);
     } else if (tag == 'error') {
@@ -102,7 +108,7 @@ module.exports = function stateChange(xhr, cb) {
                 // 200 = OK
                 cb('success', 4, 200);
             } else {
-                cb('error', 4, xmlHttp.status);
+                cb('error', 4, xhr.status, xhr.statusText);
             }
         }
     };
