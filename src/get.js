@@ -1,5 +1,19 @@
 var _getConfig = null;
-function changeStateHandle(tag, code, status, statusText) {
+/**
+ * 网络请求状态监测
+ * @param tag string
+ * 'success' 表示请求成功
+ * 'error' 表示请求失败
+ * @param readyState integer
+ * 0:未初始化。尚未调用open()方法。
+ * 1:启动。已经调用open()方法，但尚未调用send()方法。
+ * 2:发送。已经调用send()方法，但尚未接受到响应。
+ * 3:接收。已经接受到部分响应数据。
+ * 4:完成。已经接收到全部的响应数据。
+ * @param status
+ * @param statusText
+ */
+function changeStateHandle(tag, readyState, status, statusText) {
     var xhr = _getConfig.xhr;
 
     // .getResponseHeader('name'): 获取相应的响应头部信息。
