@@ -1,0 +1,26 @@
+{
+  "name": "web-http",
+  "version": "1.0.0",
+  "description": "",
+  "main": "web-http.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wuyuedefeng/web-http.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wuyuedefeng/web-http/issues"
+  },
+  "homepage": "https://github.com/wuyuedefeng/web-http#readme",
+  "devDependencies": {
+    "babelify": "^7.3.0",
+    "gulp": "^3.9.1",
+    "gulp-browserify": "^0.5.1",
+    "gulp-plumber": "^1.1.0",
+    "gulp-watch": "^4.3.11"
+  }
+}
