@@ -1,11 +1,12 @@
-var http = require("http");
+var http = require('http');
 
-http.createServer(function(request, response) {
+var data = {key: 'value', hello: 'world'};
 
-    response.writeHead(200, {"Content-Type": "text/plain"});
+var srv = http.createServer(function (req, res) {
+    res.writeHead(200, {'Content-Type': 'Application/Json'});
+    res.end(JSON.stringify(data));
+});
 
-    response.write("Hello World");
-
-    response.end();
-
-}).listen(8888);
+srv.listen(8888, function() {
+    console.log('listening on localhost:8888');
+});

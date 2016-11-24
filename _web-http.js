@@ -19,9 +19,14 @@ module.exports = function (http) {
      * @param errorDo
      */
     http.get = function (config, successDo, errorDo) {
-        var xmlHttp = require('./xmlHttp')();
-        xmlHttp.onreadystatechange = require('./stateChange')(xmlHttp, function (tag, code, status) {
-            var data = xmlHttp.response;
+        var xhr = require('./xmlHttp')();
+        xhr.onreadystatechange = require('./stateChange')(xhr, function (tag, code, status) {
+            var contentType = xhr.getResponseHeader('Content-Type');
+            var data = xhr.response;
+            if (/json/i.test(contentType)) {
+                data = JSON.parse(data);
+            }
+
             if (tag == 'success') {
                 if (config.alwaysDo) {
                     config.alwaysDo(false, data);
@@ -36,8 +41,8 @@ module.exports = function (http) {
         });
 
         if (config.async !== false) config.async = true;
-        xmlHttp.open("GET", config.url, config.async);
-        xmlHttp.send(null);
+        xhr.open("GET", config.url, config.async);
+        xhr.send(null);
     };
 };
 
@@ -52,15 +57,13 @@ module.exports = function (xmlHttp) {};
  * code
  * status
  */
-module.exports = function stateChange(xmlHttp, cb) {
+module.exports = function stateChange(xhr, cb) {
     return function () {
-        var readyState = xmlHttp.readyState;
-        cb('...', readyState);
+        var readyState = xhr.readyState;
         if (readyState == 4) {
             // 4 = "loaded"
-            if (xmlHttp.status == 200) {
+            if (xhr.status == 200) {
                 // 200 = OK
-                // ...our code here...
                 cb('success', 4, 200);
             } else {
                 cb('error', 4, xmlHttp.status);

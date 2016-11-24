@@ -5,19 +5,15 @@
  * code
  * status
  */
-module.exports = function stateChange(xmlHttp, cb) {
+module.exports = function stateChange(xhr, cb) {
     return function () {
-        var readyState = xmlHttp.readyState;
-        cb('...', readyState);
-        if (readyState == 4)
-        {   // 4 = "loaded"
-            if (xmlHttp.status == 200)
-            {// 200 = OK
-                // ...our code here...
+        var readyState = xhr.readyState;
+        if (readyState == 4) {   // 4 = "loaded"
+            if (xhr.status == 200) {
+                // 200 = OK
                 cb('success', 4, 200)
             }
-            else
-            {
+            else {
                 cb('error', 4, xmlHttp.status)
             }
         }

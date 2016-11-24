@@ -17,9 +17,9 @@
         alwaysDo: function (isErr, data) {
             console.log('alwaysDo:', isErr, data);
         }
-    }, function (data) {
+    }, function successDo(data) {
         console.log('success: ', data)
-    }, function (data) {
+    }, function errorDo(data) {
         console.log('err', data);
     })
 </script>
