@@ -12,7 +12,18 @@ module.exports = function (http) {
     http.get = function (config, successDo, errorDo) {
         var xmlHttp = require('./xmlHttp')();
         xmlHttp.onreadystatechange = require('./stateChange')(xmlHttp, function (tag, code, status) {
-
+            var data = xmlHttp.response;
+            if (tag == 'success'){
+                if (config.alwaysDo){
+                    config.alwaysDo(false, data);
+                }
+                successDo(data);
+            }else if (tag == 'error'){
+                if (config.alwaysDo){
+                    config.alwaysDo(true, data);
+                }
+                errorDo(data);
+            }
         });
 
         if (config.async !== false) config.async = true;

@@ -10,5 +10,18 @@
 </head>
 <body>
 
+<script>
+    console.log(http);
+    http.get({
+        url: 'http://127.0.0.1:8888',
+        alwaysDo: function (isErr, data) {
+            console.log('alwaysDo:', isErr, data);
+        }
+    }, function (data) {
+        console.log('success: ', data)
+    }, function (data) {
+        console.log('err', data);
+    })
+</script>
 </body>
 </html>

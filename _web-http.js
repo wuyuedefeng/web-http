@@ -4,6 +4,8 @@ var http = {};
 require('./get')(http);
 require('./post')(http);
 
+window.http = http;
+
 },{"./get":2,"./post":3}],2:[function(require,module,exports){
 module.exports = function (http) {
     /**
@@ -18,7 +20,20 @@ module.exports = function (http) {
      */
     http.get = function (config, successDo, errorDo) {
         var xmlHttp = require('./xmlHttp')();
-        xmlHttp.onreadystatechange = require('./stateChange')(xmlHttp, function (tag, code, status) {});
+        xmlHttp.onreadystatechange = require('./stateChange')(xmlHttp, function (tag, code, status) {
+            var data = xmlHttp.response;
+            if (tag == 'success') {
+                if (config.alwaysDo) {
+                    config.alwaysDo(false, data);
+                }
+                successDo(data);
+            } else if (tag == 'error') {
+                if (config.alwaysDo) {
+                    config.alwaysDo(true, data);
+                }
+                errorDo(data);
+            }
+        });
 
         if (config.async !== false) config.async = true;
         xmlHttp.open("GET", config.url, config.async);
@@ -38,16 +53,20 @@ module.exports = function (xmlHttp) {};
  * status
  */
 module.exports = function stateChange(xmlHttp, cb) {
-    if (xmlHttp.readyState == 4) {
-        // 4 = "loaded"
-        if (xmlHttp.status == 200) {
-            // 200 = OK
-            // ...our code here...
-            cb('success', 4, 200);
-        } else {
-            cb('error', 4, xmlHttp.status);
+    return function () {
+        var readyState = xmlHttp.readyState;
+        cb('...', readyState);
+        if (readyState == 4) {
+            // 4 = "loaded"
+            if (xmlHttp.status == 200) {
+                // 200 = OK
+                // ...our code here...
+                cb('success', 4, 200);
+            } else {
+                cb('error', 4, xmlHttp.status);
+            }
         }
-    }
+    };
 };
 
 },{}],5:[function(require,module,exports){
