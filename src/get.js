@@ -1,20 +1,21 @@
-
+var tool = require('./tool');
 module.exports = function (http) {
     /**
      * @param config {}
      * url ""
-     * async: bool
+     * async: bool, default: true
      * params: {}
      * headers: {}
-     * alwaysDo (isErr, data)
-     * @param successDo
-     * @param errorDo
+     * onEnd (isErr, data)
+     * @param onSuccess
+     * @param onError
      */
-    http.get = function (config, successDo, errorDo) {
+    http.get = function (config, onSuccess, onError) {
         var xhr = require('./xhr')();
         config = config || {};
-        config.successDo = config.successDo || successDo;
-        config.errorDo = config.errorDo || errorDo;
+        config.params = config.params || {};
+        config.onSuccess = config.onSuccess || onSuccess;
+        config.onError = config.onError || onError;
         config.xhr = xhr;
 
 
@@ -27,7 +28,9 @@ module.exports = function (http) {
          boolean为是否异步发送请求。
          调用该方法并不会真正发送请求，而只是启动一个请求以备发送。
          */
-        xhr.open("GET", config.url, config.async);
+
+        var urlParams = tool.objToParams(config.params);
+        xhr.open("GET", `${config.url}?${urlParams}`, config.async);
 
         /* .setRequestHeader("name","value"):设置自定义的请求头部信息。
          参数:name为自定义的头部字段的名称
@@ -37,12 +40,11 @@ module.exports = function (http) {
          */
         config.headers = config.headers || {};
         for (var key in config.headers) {
-            console.log(key);
             xhr.setRequestHeader(key, config.headers[key])
         }
 
         // .send(data):将请求发送到服务器。参数data是作为请求主体发送的数据，若不需要传数据，即data为null。服务器在收到响应后，响应的数据会自动填充XHR对象的属性。相关属性有responseText、responseXML、status、statusText、readyStatus
-        xhr.send(config.params || null);
+        xhr.send(null);
 
         //.abort():在接收到响应之前取消异步请求。
         // xhr.abort()

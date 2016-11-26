@@ -60,11 +60,11 @@ function changeStateHandle(tag, readyState, status, statusText) {
         if (/json/i.test(contentType)) {
             data = JSON.parse(data);
         }
-        _config.alwaysDo && _config.alwaysDo(false, data);
-        _config.successDo && _config.successDo(data);
+        _config["onEnd"] && _config["onEnd"](false, data);
+        _config.onSuccess && _config.onSuccess(data);
     } else if (tag == 'error') {
-        _config.alwaysDo && _config.alwaysDo(true, data);
-        _config.errorDo && _config.errorDo(data);
+        _config["onEnd"] && _config["onEnd"](true, data);
+        _config.onError && _config.onError(data);
     }
 }
 

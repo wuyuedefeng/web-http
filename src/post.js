@@ -1,20 +1,22 @@
-var _postConfig = null;
+var tool = require('./tool');
 module.exports = function (http) {
     /**
      * @param config {}
      * url ""
-     * async: bool
+     * async: bool, default: true
      * params: {}
      * headers: {}
-     * alwaysDo (isErr, data)
-     * @param successDo
-     * @param errorDo
+     * onEnd (isErr, data)
+     * @param onSuccess
+     * @param onError
      */
-    http.post = function (config, successDo, errorDo) {
+    http.post = function (config, onSuccess, onError) {
         var xhr = require('./xhr')();
         _postConfig = config;
-        _postConfig.successDo = _postConfig.successDo || successDo;
-        _postConfig.errorDo = _postConfig.errorDo || errorDo;
+        config.params = config.params || {};
+        config.data = config.data || {};
+        _postConfig.onSuccess = _postConfig.onSuccess || onSuccess;
+        _postConfig.onError = _postConfig.onError || onError;
         _postConfig.xhr = xhr;
 
 
@@ -27,7 +29,9 @@ module.exports = function (http) {
          boolean为是否异步发送请求。
          调用该方法并不会真正发送请求，而只是启动一个请求以备发送。
          */
-        xhr.open("POST", config.url, config.async);
+
+        var urlParams = tool.objToParams(config.params);
+        xhr.open("POST", `${config.url}?${urlParams}`, config.async);
 
         /* .setRequestHeader("name","value"):设置自定义的请求头部信息。
          参数:name为自定义的头部字段的名称
@@ -36,13 +40,14 @@ module.exports = function (http) {
          该方法的调用必须在调用open()方法之后且在调用send()方法之前。
          */
         config.headers = config.headers || {};
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         for (var key in config.headers) {
-            console.log(key);
             xhr.setRequestHeader(key, config.headers[key])
         }
 
         // .send(data):将请求发送到服务器。参数data是作为请求主体发送的数据，若不需要传数据，即data为null。服务器在收到响应后，响应的数据会自动填充XHR对象的属性。相关属性有responseText、responseXML、status、statusText、readyStatus
-        xhr.send(config.params || null);
+        console.log(11, config.data, tool.objToParams(config.data));
+        xhr.send(tool.objToParams(config.data) || null);
 
         //.abort():在接收到响应之前取消异步请求。
         // xhr.abort()

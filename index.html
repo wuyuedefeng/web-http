@@ -11,13 +11,16 @@
 <body>
 
 <script>
-    console.log(http);
-//    http.get({
+//    xhttp.get({
 //        url: 'http://127.0.0.1:8888',
 //        headers: {
 //            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
 //        },
-//        alwaysDo: function (isErr, data) {
+//        params: {
+//            b: 2,
+//            c: 3
+//        },
+//        onEnd: function (isErr, data) {
 //            console.log('alwaysDo:', isErr, data);
 //        }
 //    }, function successDo(data) {
@@ -25,19 +28,25 @@
 //    }, function errorDo(data) {
 //        console.log('err', data);
 //    });
-    http.post({
+    xhttp.post({
         url: 'http://127.0.0.1:8888',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+        params:{
+          cc: 1,
+            bb: 2
+
         },
         data: {
             a: 1,
-            b: 2
+            b: 3
         },
-        alwaysDo: function (isErr, data) {
+        onEnd: function (isErr, data) {
             console.log(isErr, data);
         }
-    })
+    });
+
+//$.post("http://127.0.0.1:8888",{aaa: 1},function(result){
+//    console.log(result);
+//});
 
 </script>
 </body>

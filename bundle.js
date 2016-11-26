@@ -1,32 +1,33 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var http = {};
-
-require('./get')(http);
-require('./post')(http);
-
-window.http = http;
+(function () {
+    var http = {};
+    require('./get')(http);
+    require('./post')(http);
+    window.xhttp = http;
+})();
 
 
 
 
 },{"./get":2,"./post":3}],2:[function(require,module,exports){
-
+var tool = require('./tool');
 module.exports = function (http) {
     /**
      * @param config {}
      * url ""
-     * async: bool
+     * async: bool, default: true
      * params: {}
      * headers: {}
-     * alwaysDo (isErr, data)
-     * @param successDo
-     * @param errorDo
+     * onEnd (isErr, data)
+     * @param onSuccess
+     * @param onError
      */
-    http.get = function (config, successDo, errorDo) {
+    http.get = function (config, onSuccess, onError) {
         var xhr = require('./xhr')();
         config = config || {};
-        config.successDo = config.successDo || successDo;
-        config.errorDo = config.errorDo || errorDo;
+        config.params = config.params || {};
+        config.onSuccess = config.onSuccess || onSuccess;
+        config.onError = config.onError || onError;
         config.xhr = xhr;
 
 
@@ -39,7 +40,9 @@ module.exports = function (http) {
          boolean为是否异步发送请求。
          调用该方法并不会真正发送请求，而只是启动一个请求以备发送。
          */
-        xhr.open("GET", config.url, config.async);
+
+        var urlParams = tool.objToParams(config.params);
+        xhr.open("GET", `${config.url}?${urlParams}`, config.async);
 
         /* .setRequestHeader("name","value"):设置自定义的请求头部信息。
          参数:name为自定义的头部字段的名称
@@ -49,36 +52,37 @@ module.exports = function (http) {
          */
         config.headers = config.headers || {};
         for (var key in config.headers) {
-            console.log(key);
             xhr.setRequestHeader(key, config.headers[key])
         }
 
         // .send(data):将请求发送到服务器。参数data是作为请求主体发送的数据，若不需要传数据，即data为null。服务器在收到响应后，响应的数据会自动填充XHR对象的属性。相关属性有responseText、responseXML、status、statusText、readyStatus
-        xhr.send(config.params || null);
+        xhr.send(null);
 
         //.abort():在接收到响应之前取消异步请求。
         // xhr.abort()
         return xhr;
     }
 };
-},{"./stateChange":4,"./xhr":5}],3:[function(require,module,exports){
-var _postConfig = null;
+},{"./stateChange":4,"./tool":5,"./xhr":6}],3:[function(require,module,exports){
+var tool = require('./tool');
 module.exports = function (http) {
     /**
      * @param config {}
      * url ""
-     * async: bool
+     * async: bool, default: true
      * params: {}
      * headers: {}
-     * alwaysDo (isErr, data)
-     * @param successDo
-     * @param errorDo
+     * onEnd (isErr, data)
+     * @param onSuccess
+     * @param onError
      */
-    http.post = function (config, successDo, errorDo) {
+    http.post = function (config, onSuccess, onError) {
         var xhr = require('./xhr')();
         _postConfig = config;
-        _postConfig.successDo = _postConfig.successDo || successDo;
-        _postConfig.errorDo = _postConfig.errorDo || errorDo;
+        config.params = config.params || {};
+        config.data = config.data || {};
+        _postConfig.onSuccess = _postConfig.onSuccess || onSuccess;
+        _postConfig.onError = _postConfig.onError || onError;
         _postConfig.xhr = xhr;
 
 
@@ -91,7 +95,9 @@ module.exports = function (http) {
          boolean为是否异步发送请求。
          调用该方法并不会真正发送请求，而只是启动一个请求以备发送。
          */
-        xhr.open("POST", config.url, config.async);
+
+        var urlParams = tool.objToParams(config.params);
+        xhr.open("POST", `${config.url}?${urlParams}`, config.async);
 
         /* .setRequestHeader("name","value"):设置自定义的请求头部信息。
          参数:name为自定义的头部字段的名称
@@ -100,13 +106,14 @@ module.exports = function (http) {
          该方法的调用必须在调用open()方法之后且在调用send()方法之前。
          */
         config.headers = config.headers || {};
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         for (var key in config.headers) {
-            console.log(key);
             xhr.setRequestHeader(key, config.headers[key])
         }
 
         // .send(data):将请求发送到服务器。参数data是作为请求主体发送的数据，若不需要传数据，即data为null。服务器在收到响应后，响应的数据会自动填充XHR对象的属性。相关属性有responseText、responseXML、status、statusText、readyStatus
-        xhr.send(config.params || null);
+        console.log(11, config.data, tool.objToParams(config.data));
+        xhr.send(tool.objToParams(config.data) || null);
 
         //.abort():在接收到响应之前取消异步请求。
         // xhr.abort()
@@ -116,7 +123,7 @@ module.exports = function (http) {
 
 
 
-},{"./stateChange":4,"./xhr":5}],4:[function(require,module,exports){
+},{"./stateChange":4,"./tool":5,"./xhr":6}],4:[function(require,module,exports){
 var _config = null;
 
 /**
@@ -179,11 +186,11 @@ function changeStateHandle(tag, readyState, status, statusText) {
         if (/json/i.test(contentType)) {
             data = JSON.parse(data);
         }
-        _config.alwaysDo && _config.alwaysDo(false, data);
-        _config.successDo && _config.successDo(data);
+        _config["onEnd"] && _config["onEnd"](false, data);
+        _config.onSuccess && _config.onSuccess(data);
     } else if (tag == 'error') {
-        _config.alwaysDo && _config.alwaysDo(true, data);
-        _config.errorDo && _config.errorDo(data);
+        _config["onEnd"] && _config["onEnd"](true, data);
+        _config.onError && _config.onError(data);
     }
 }
 
@@ -191,6 +198,27 @@ function changeStateHandle(tag, readyState, status, statusText) {
 
 
 },{}],5:[function(require,module,exports){
+function objToParams(obj) {
+    return Object.keys(obj).map(function(key) {
+        return key + '=' + obj[key];
+    }).join('&');
+}
+exports.objToParams = objToParams;
+
+exports.objToData = function (obj) {
+
+    if ('FormData' in window) {
+        var data = new FormData();
+        for (key in obj){
+            console.log(key);
+            data.append(key, obj["key"]);
+        }
+    }else {
+        data = objToParams(obj);
+    }
+    return data;
+};
+},{}],6:[function(require,module,exports){
 module.exports = function () {
     var xmlHttp = null;
     if (window.XMLHttpRequest) {
