@@ -1,42 +1,3 @@
-var _getConfig = null;
-/**
- * 网络请求状态监测
- * @param tag string
- * 'success' 表示请求成功
- * 'error' 表示请求失败
- * @param readyState integer
- * 0:未初始化。尚未调用open()方法。
- * 1:启动。已经调用open()方法，但尚未调用send()方法。
- * 2:发送。已经调用send()方法，但尚未接受到响应。
- * 3:接收。已经接受到部分响应数据。
- * 4:完成。已经接收到全部的响应数据。
- * @param status
- * @param statusText
- */
-function changeStateHandle(tag, readyState, status, statusText) {
-    var xhr = _getConfig.xhr;
-
-    // .getResponseHeader('name'): 获取相应的响应头部信息。
-    // 参数：name为头部字段名称。返回一个对应的值的字符串。
-    // .getAllResponseHeaders():返回一个包含所有头部信息（key-value）的长字符串。
-    // xhr.getAllResponseHeaders();    //'Content-Type: text/html'
-    var contentType = xhr.getResponseHeader('Content-Type');
-
-    // xhr.response为从服务器获取下来的数据。
-    var data = xhr.response;
-
-    if (tag == 'success') {
-        if (/json/i.test(contentType)) {
-            data = JSON.parse(data);
-        }
-        _getConfig.alwaysDo && _getConfig.alwaysDo(false, data);
-        _getConfig.successDo && _getConfig.successDo(data);
-    } else if (tag == 'error') {
-        _getConfig.alwaysDo && _getConfig.alwaysDo(true, data);
-        _getConfig.errorDo && _getConfig.errorDo(data);
-    }
-}
-
 
 module.exports = function (http) {
     /**
@@ -51,13 +12,13 @@ module.exports = function (http) {
      */
     http.get = function (config, successDo, errorDo) {
         var xhr = require('./xhr')();
-        _getConfig = config;
-        _getConfig.successDo = _getConfig.successDo || successDo;
-        _getConfig.errorDo = _getConfig.errorDo || errorDo;
-        _getConfig.xhr = xhr;
+        config = config || {};
+        config.successDo = config.successDo || successDo;
+        config.errorDo = config.errorDo || errorDo;
+        config.xhr = xhr;
 
 
-        xhr.onreadystatechange = require('./stateChange')(xhr, changeStateHandle);
+        xhr.onreadystatechange = require('./stateChange')(config);
 
         if (config.async !== false) config.async = true;
         /* .open("method","url",boolean):

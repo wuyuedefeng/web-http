@@ -6,6 +6,7 @@ var plumber = require('gulp-plumber');
 gulp.task('es6ToEs5', function() {
     return browserify('./src/_web-http.js')
         .bundle()
+        .pipe(plumber())
         //Pass desired output filename to vinyl-source-stream
         .pipe(source('bundle.js'))
         // Start piping stream to tasks!

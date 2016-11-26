@@ -1,12 +1,17 @@
-var http = require('http');
+var express = require('express');
+var app = express();
 
-var data = {key: 'value', hello: 'world'};
-
-var srv = http.createServer(function (req, res) {
-    res.writeHead(200, {'Content-Type': 'Application/Json', 'test': 'abc'});
-    res.end(JSON.stringify(data));
+// respond with "hello world" when a GET request is made to the homepage
+app.get('/', function(req, res) {
+    res.send('hello world');
 });
 
-srv.listen(8888, function() {
-    console.log('listening on localhost:8888');
+
+app.post('/', function(req, res) {
+    res.send({
+        a: 1,
+        b: 2
+    });
 });
+
+app.listen('8888');
