@@ -1,13 +1,14 @@
 // npm install gulp-browserify babelify  gulp-plumber gulp --save-dev
 var gulp = require('gulp');
-var browserify = require('gulp-browserify');
+var browserify = require('browserify');
+var source = require('vinyl-source-stream');
 var plumber = require('gulp-plumber');
 gulp.task('es6ToEs5', function() {
-    return gulp.src('./src/_web-http.js')
-        .pipe(plumber())
-        .pipe(browserify({
-            transform: ["babelify"]
-        }))
+    return browserify('./src/_web-http.js')
+        .bundle()
+        //Pass desired output filename to vinyl-source-stream
+        .pipe(source('bundle.js'))
+        // Start piping stream to tasks!
         .pipe(gulp.dest('./'));
 });
 

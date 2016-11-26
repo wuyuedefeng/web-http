@@ -17,10 +17,10 @@
   },
   "homepage": "https://github.com/wuyuedefeng/web-http#readme",
   "devDependencies": {
-    "babelify": "^7.3.0",
+    "browserify": "^13.1.1",
     "gulp": "^3.9.1",
-    "gulp-browserify": "^0.5.1",
     "gulp-plumber": "^1.1.0",
-    "gulp-watch": "^4.3.11"
+    "gulp-watch": "^4.3.11",
+    "vinyl-source-stream": "^1.1.0"
   }
 }
