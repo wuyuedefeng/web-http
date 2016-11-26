@@ -50,7 +50,7 @@ module.exports = function (http) {
      * @param errorDo
      */
     http.get = function (config, successDo, errorDo) {
-        var xhr = require('./xmlHttp')();
+        var xhr = require('./xhr')();
         _getConfig = config;
         _getConfig.successDo = _getConfig.successDo || successDo;
         _getConfig.errorDo = _getConfig.errorDo || errorDo;

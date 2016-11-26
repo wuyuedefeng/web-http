@@ -101,7 +101,7 @@ module.exports = function (http) {
     }
 };
 },{"./stateChange":4,"./xmlHttp":5}],3:[function(require,module,exports){
-module.exports = function (xmlHttp) {
+module.exports = function (http) {
 
 };
 },{}],4:[function(require,module,exports){
