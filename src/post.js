@@ -11,14 +11,9 @@ module.exports = function (http) {
      * @param onError
      */
     http.post = function (config, onSuccess, onError) {
+        tool.handleConfig(config, onSuccess, onError);
         var xhr = require('./xhr')();
-        config = config || {};
-        config.params = config.params || {};
-        config.data = config.data || {};
-        config.onSuccess = config.onSuccess || onSuccess;
-        config.onError = config.onError || onError;
         config.xhr = xhr;
-
 
         xhr.onreadystatechange = require('./stateChange')(config);
 

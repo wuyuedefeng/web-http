@@ -11,11 +11,8 @@ module.exports = function (http) {
      * @param onError
      */
     http.get = function (config, onSuccess, onError) {
+        tool.handleConfig(config, onSuccess, onError);
         var xhr = require('./xhr')();
-        config = config || {};
-        config.params = config.params || {};
-        config.onSuccess = config.onSuccess || onSuccess;
-        config.onError = config.onError || onError;
         config.xhr = xhr;
 
 

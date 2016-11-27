@@ -18,3 +18,12 @@ exports.objToData = function (obj) {
     }
     return data;
 };
+
+exports.handleConfig = function (config, onSuccess, onError) {
+    config = config || {};
+    config.params = config.params || {};
+    config.data = config.data || {};
+    config.onSuccess = config.onSuccess || onSuccess;
+    config.onError = config.onError || onError;
+    if (config.async !== false) config.async = true;
+};

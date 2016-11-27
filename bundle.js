@@ -27,14 +27,9 @@ var tool = require('./tool');
  */
 module.exports = function (http) {
     http.download = function (config, onSuccess, onError) {
+        tool.handleConfig(config, onSuccess, onError);
         var xhr = require('./xhr')();
-        config = config || {};
-        config.params = config.params || {};
-        config.onSuccess = config.onSuccess || onSuccess;
-        config.onError = config.onError || onError;
         config.xhr = xhr;
-        if (config.async !== false) config.async = true;
-
         xhr.onprogress = require('./progress')(config);
 
         xhr.onreadystatechange = require('./stateChange')(config);
@@ -71,11 +66,8 @@ module.exports = function (http) {
      * @param onError
      */
     http.get = function (config, onSuccess, onError) {
+        tool.handleConfig(config, onSuccess, onError);
         var xhr = require('./xhr')();
-        config = config || {};
-        config.params = config.params || {};
-        config.onSuccess = config.onSuccess || onSuccess;
-        config.onError = config.onError || onError;
         config.xhr = xhr;
 
 
@@ -125,14 +117,9 @@ module.exports = function (http) {
      * @param onError
      */
     http.post = function (config, onSuccess, onError) {
+        tool.handleConfig(config, onSuccess, onError);
         var xhr = require('./xhr')();
-        config = config || {};
-        config.params = config.params || {};
-        config.data = config.data || {};
-        config.onSuccess = config.onSuccess || onSuccess;
-        config.onError = config.onError || onError;
         config.xhr = xhr;
-
 
         xhr.onreadystatechange = require('./stateChange')(config);
 
@@ -204,7 +191,7 @@ module.exports = function stateChange(config) {
         // 2:发送。已经调用send()方法，但尚未接受到响应。
         // 3:接收。已经接受到部分响应数据。
         // 4:完成。已经接收到全部的响应数据。
-        console.log(readyState, xhr.status);
+        // console.log(readyState, xhr.status, xhr.response.length, xhr);
         if (readyState == 4) {   // 4 = "loaded"
             if (xhr.status == 200) {
                 // 200 = OK
@@ -278,6 +265,15 @@ exports.objToData = function (obj) {
         data = objToParams(obj);
     }
     return data;
+};
+
+exports.handleConfig = function (config, onSuccess, onError) {
+    config = config || {};
+    config.params = config.params || {};
+    config.data = config.data || {};
+    config.onSuccess = config.onSuccess || onSuccess;
+    config.onError = config.onError || onError;
+    if (config.async !== false) config.async = true;
 };
 },{}],8:[function(require,module,exports){
 module.exports = function () {

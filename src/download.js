@@ -14,14 +14,9 @@ var tool = require('./tool');
  */
 module.exports = function (http) {
     http.download = function (config, onSuccess, onError) {
+        tool.handleConfig(config, onSuccess, onError);
         var xhr = require('./xhr')();
-        config = config || {};
-        config.params = config.params || {};
-        config.onSuccess = config.onSuccess || onSuccess;
-        config.onError = config.onError || onError;
         config.xhr = xhr;
-        if (config.async !== false) config.async = true;
-
         xhr.onprogress = require('./progress')(config);
 
         xhr.onreadystatechange = require('./stateChange')(config);

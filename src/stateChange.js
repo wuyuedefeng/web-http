@@ -18,7 +18,7 @@ module.exports = function stateChange(config) {
         // 2:发送。已经调用send()方法，但尚未接受到响应。
         // 3:接收。已经接受到部分响应数据。
         // 4:完成。已经接收到全部的响应数据。
-        console.log(readyState, xhr.status);
+        // console.log(readyState, xhr.status, xhr.response.length, xhr);
         if (readyState == 4) {   // 4 = "loaded"
             if (xhr.status == 200) {
                 // 200 = OK
