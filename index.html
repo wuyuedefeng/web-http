@@ -28,21 +28,30 @@
 //    }, function errorDo(data) {
 //        console.log('err', data);
 //    });
-    xhttp.post({
-        url: 'http://127.0.0.1:8888',
-        params:{
-          cc: 1,
-            bb: 2
 
-        },
-        data: {
-            a: 1,
-            b: 3
-        },
-        onEnd: function (isErr, data) {
-            console.log(isErr, data);
-        }
-    });
+//    xhttp.post({
+//        url: 'http://127.0.0.1:8888',
+//        params:{
+//          cc: 1,
+//            bb: 2
+//
+//        },
+//        data: {
+//            a: 1,
+//            b: 3
+//        },
+//        onEnd: function (isErr, data) {
+//            console.log(isErr, data);
+//        }
+//    });
+
+xhttp.download({
+    url: 'http://xx.139.xdowns.com/2016/powerworddict.rar',
+    onEnd: function () {
+        console.log('finish');
+    }
+})
+
 
 //$.post("http://127.0.0.1:8888",{aaa: 1},function(result){
 //    console.log(result);

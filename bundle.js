@@ -3,13 +3,41 @@
     var http = {};
     require('./get')(http);
     require('./post')(http);
+    require('./download')(http);
     window.xhttp = http;
 })();
 
 
 
 
-},{"./get":2,"./post":3}],2:[function(require,module,exports){
+},{"./download":2,"./get":3,"./post":4}],2:[function(require,module,exports){
+/**
+ * @param config {}
+ * url ""
+ * async: bool, default: true
+ * onProgress
+ * params: {}
+ * headers: {}
+ * alwaysDo (isErr, data)
+ * @param successDo
+ * @param errorDo
+ */
+module.exports = function (http) {
+    http.download = function (config, onSuccess, onError) {
+        var xhr = require('./xhr')();
+        config = config || {};
+        config.onSuccess = config.onSuccess || onSuccess;
+        config.onError = config.onError || onError;
+        config.xhr = xhr;
+
+        xhr.onprogress = require('./progress')(config);
+
+        xhr.onreadystatechange = require('./stateChange')(config);
+        xhr.open('GET', config.url, true);
+        xhr.send(null);
+    }
+};
+},{"./progress":5,"./stateChange":6,"./xhr":8}],3:[function(require,module,exports){
 var tool = require('./tool');
 module.exports = function (http) {
     /**
@@ -63,7 +91,7 @@ module.exports = function (http) {
         return xhr;
     }
 };
-},{"./stateChange":4,"./tool":5,"./xhr":6}],3:[function(require,module,exports){
+},{"./stateChange":6,"./tool":7,"./xhr":8}],4:[function(require,module,exports){
 var tool = require('./tool');
 module.exports = function (http) {
     /**
@@ -123,7 +151,19 @@ module.exports = function (http) {
 
 
 
-},{"./stateChange":4,"./tool":5,"./xhr":6}],4:[function(require,module,exports){
+},{"./stateChange":6,"./tool":7,"./xhr":8}],5:[function(require,module,exports){
+module.exports = function (config) {
+    return function progress(event) {
+        if (event["lengthComputable"]) {
+            //evt.loaded the bytes browser receive
+            //evt.total the total bytes seted by the header
+            var percentComplete = (event["loaded"] / event["total"]) * 100;
+            console.log(percentComplete);
+            config["onProgress"] && config["onProgress"](event, percentComplete);
+        }
+    }
+};
+},{}],6:[function(require,module,exports){
 var _config = null;
 
 /**
@@ -197,7 +237,7 @@ function changeStateHandle(tag, readyState, status, statusText) {
 
 
 
-},{}],5:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 function objToParams(obj) {
     return Object.keys(obj).map(function(key) {
         return key + '=' + obj[key];
@@ -218,7 +258,7 @@ exports.objToData = function (obj) {
     }
     return data;
 };
-},{}],6:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 module.exports = function () {
     var xmlHttp = null;
     if (window.XMLHttpRequest) {

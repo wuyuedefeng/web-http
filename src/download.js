@@ -10,14 +10,17 @@
  * @param errorDo
  */
 module.exports = function (http) {
-    http.download = function (config, successDo, errorDo) {
+    http.download = function (config, onSuccess, onError) {
         var xhr = require('./xhr')();
         config = config || {};
-        config.successDo = config.successDo || successDo;
-        config.errorDo = config.errorDo || errorDo;
+        config.onSuccess = config.onSuccess || onSuccess;
+        config.onError = config.onError || onError;
         config.xhr = xhr;
 
-        xhr.onreadystatechange = require('./stateChange')(config);
+        xhr.onprogress = require('./progress')(config);
 
+        xhr.onreadystatechange = require('./stateChange')(config);
+        xhr.open('GET', config.url, true);
+        xhr.send(null);
     }
 };
