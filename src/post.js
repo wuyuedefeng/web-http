@@ -12,12 +12,12 @@ module.exports = function (http) {
      */
     http.post = function (config, onSuccess, onError) {
         var xhr = require('./xhr')();
-        _postConfig = config;
+        config = config || {};
         config.params = config.params || {};
         config.data = config.data || {};
-        _postConfig.onSuccess = _postConfig.onSuccess || onSuccess;
-        _postConfig.onError = _postConfig.onError || onError;
-        _postConfig.xhr = xhr;
+        config.onSuccess = config.onSuccess || onSuccess;
+        config.onError = config.onError || onError;
+        config.xhr = xhr;
 
 
         xhr.onreadystatechange = require('./stateChange')(config);
