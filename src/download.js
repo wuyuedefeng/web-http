@@ -1,8 +1,11 @@
+var tool = require('./tool');
 /**
  * @param config {}
  * url ""
  * async: bool, default: true
- * onProgress
+ * onProgress function
+ * timeout integer ms
+ * onTimeout function
  * params: {}
  * headers: {}
  * alwaysDo (isErr, data)
@@ -13,14 +16,31 @@ module.exports = function (http) {
     http.download = function (config, onSuccess, onError) {
         var xhr = require('./xhr')();
         config = config || {};
+        config.params = config.params || {};
         config.onSuccess = config.onSuccess || onSuccess;
         config.onError = config.onError || onError;
         config.xhr = xhr;
+        if (config.async !== false) config.async = true;
 
         xhr.onprogress = require('./progress')(config);
 
         xhr.onreadystatechange = require('./stateChange')(config);
-        xhr.open('GET', config.url, true);
+
+        if (config.async){
+            xhr.timeout = config.timeout || 999999999;
+            xhr.ontimeout = config.onTimeout || function(event){
+                    console.error(`${config.url} request timeout ${config.timeout}ms`);
+                };
+        }
+
+        var urlParams = tool.objToParams(config.params);
+        xhr.open("GET", `${config.url}?${urlParams}`, config.async);
+
+        config.headers = config.headers || {};
+        for (var key in config.headers) {
+            xhr.setRequestHeader(key, config.headers[key])
+        }
+
         xhr.send(null);
     }
 };

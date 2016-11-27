@@ -47,8 +47,9 @@
 
 xhttp.download({
     url: 'http://xx.139.xdowns.com/2016/powerworddict.rar',
-    onEnd: function () {
-        console.log('finish');
+    timeout: 5000,
+    onEnd: function (isErr, data) {
+        console.log('finish', isErr,data);
     }
 })
 

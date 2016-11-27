@@ -11,11 +11,14 @@
 
 
 },{"./download":2,"./get":3,"./post":4}],2:[function(require,module,exports){
+var tool = require('./tool');
 /**
  * @param config {}
  * url ""
  * async: bool, default: true
- * onProgress
+ * onProgress function
+ * timeout integer ms
+ * onTimeout function
  * params: {}
  * headers: {}
  * alwaysDo (isErr, data)
@@ -26,18 +29,35 @@ module.exports = function (http) {
     http.download = function (config, onSuccess, onError) {
         var xhr = require('./xhr')();
         config = config || {};
+        config.params = config.params || {};
         config.onSuccess = config.onSuccess || onSuccess;
         config.onError = config.onError || onError;
         config.xhr = xhr;
+        if (config.async !== false) config.async = true;
 
         xhr.onprogress = require('./progress')(config);
 
         xhr.onreadystatechange = require('./stateChange')(config);
-        xhr.open('GET', config.url, true);
+
+        if (config.async){
+            xhr.timeout = config.timeout || 999999999;
+            xhr.ontimeout = config.onTimeout || function(event){
+                    console.error(`${config.url} request timeout ${config.timeout}ms`);
+                };
+        }
+
+        var urlParams = tool.objToParams(config.params);
+        xhr.open("GET", `${config.url}?${urlParams}`, config.async);
+
+        config.headers = config.headers || {};
+        for (var key in config.headers) {
+            xhr.setRequestHeader(key, config.headers[key])
+        }
+
         xhr.send(null);
     }
 };
-},{"./progress":5,"./stateChange":6,"./xhr":8}],3:[function(require,module,exports){
+},{"./progress":5,"./stateChange":6,"./tool":7,"./xhr":8}],3:[function(require,module,exports){
 var tool = require('./tool');
 module.exports = function (http) {
     /**
@@ -184,6 +204,7 @@ module.exports = function stateChange(config) {
         // 2:发送。已经调用send()方法，但尚未接受到响应。
         // 3:接收。已经接受到部分响应数据。
         // 4:完成。已经接收到全部的响应数据。
+        console.log(readyState, xhr.status);
         if (readyState == 4) {   // 4 = "loaded"
             if (xhr.status == 200) {
                 // 200 = OK
