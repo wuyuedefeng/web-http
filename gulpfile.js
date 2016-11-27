@@ -1,10 +1,12 @@
 // npm install gulp-browserify babelify  gulp-plumber gulp --save-dev
 var gulp = require('gulp');
 var browserify = require('browserify');
+var babelify = require('babelify');
 var source = require('vinyl-source-stream');
 var plumber = require('gulp-plumber');
 gulp.task('es6ToEs5', function() {
     return browserify('./src/_web-http.js')
+        .transform(babelify)
         .bundle()
         .pipe(plumber())
         //Pass desired output filename to vinyl-source-stream
@@ -13,11 +15,19 @@ gulp.task('es6ToEs5', function() {
         .pipe(gulp.dest('./'));
 });
 
+var uglify = require('gulp-uglify');
+gulp.task('uglify',['es6ToEs5'], function () {
+   return gulp.src('./bundle.js')
+       .pipe(plumber())
+       .pipe(uglify())
+       .pipe(gulp.dest("./"));
+});
+
 
 // npm install --save-dev gulp-watch --save-dev
 var watch = require('gulp-watch');
-gulp.task('watch',['es6ToEs5'], function(){
+gulp.task('watch',['uglify'], function(){
     watch('./src/**/*.js', function () {
-        gulp.run('es6ToEs5');
+        gulp.run('uglify');
     });
 });
