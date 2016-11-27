@@ -48,11 +48,13 @@
 
 xhttp.download({
     url: 'http://xx.139.xdowns.com/2016/powerworddict.rar',
-    timeout: 5000,
+//    timeout: 5000,
     onEnd: function (isErr, data) {
-        console.log('finish', isErr,data);
+        console.log('finish', isErr);
     }
-})
+}, function (data) {
+    console.log(data);
+});
 
 //
 //$.post("http://127.0.0.1:8888",{aaa: 1},function(result){

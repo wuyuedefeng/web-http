@@ -26,4 +26,5 @@ exports.handleConfig = function (config, onSuccess, onError) {
     config.onSuccess = config.onSuccess || onSuccess;
     config.onError = config.onError || onError;
     if (config.async !== false) config.async = true;
+    return config;
 };

@@ -1,5 +1,3 @@
-var _config = null;
-
 /**
  * @param xmlHttp
  * @param cb
@@ -8,7 +6,6 @@ var _config = null;
  * status
  */
 module.exports = function stateChange(config) {
-    _config = config;
     var xhr = config.xhr;
     return function () {
         var readyState = xhr.readyState;
@@ -22,10 +19,10 @@ module.exports = function stateChange(config) {
         if (readyState == 4) {   // 4 = "loaded"
             if (xhr.status == 200) {
                 // 200 = OK
-                changeStateHandle('success', 4, 200)
+                changeStateHandle(config, 'success', 4, 200)
             }
             else {
-                changeStateHandle('error', 4, xhr.status, xhr.statusText)
+                changeStateHandle(config, 'error', 4, xhr.status, xhr.statusText)
             }
         }
     }
@@ -45,8 +42,10 @@ module.exports = function stateChange(config) {
  * @param status
  * @param statusText
  */
-function changeStateHandle(tag, readyState, status, statusText) {
-    var xhr = _config.xhr;
+function changeStateHandle(config, tag, readyState, status, statusText) {
+    var xhr = config.xhr;
+
+    console.log('-------', config["onEnd"], config["onSuccess"]);
 
     // .getResponseHeader('name'): 获取相应的响应头部信息。
     // 参数：name为头部字段名称。返回一个对应的值的字符串。
@@ -61,11 +60,11 @@ function changeStateHandle(tag, readyState, status, statusText) {
         if (/json/i.test(contentType)) {
             data = JSON.parse(data);
         }
-        _config["onEnd"] && _config["onEnd"](false, data);
-        _config.onSuccess && _config.onSuccess(data);
+        config["onEnd"] && config["onEnd"](false, data);
+        config.onSuccess && config.onSuccess(data);
     } else if (tag == 'error') {
-        _config["onEnd"] && _config["onEnd"](true, data);
-        _config.onError && _config.onError(data);
+        config["onEnd"] && config["onEnd"](true, data);
+        config.onError && config.onError(data);
     }
 }
 
