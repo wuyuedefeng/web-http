@@ -9,6 +9,9 @@ module.exports = function (config, onSuccess, onError) {
     var xhr = require('./xhr')();
     config.xhr = xhr;
 
+
+    xhr.onreadystatechange = require('./stateChange')(config);
+
     // 开始上传文件
     xhr.upload.onloadstart = function(){//上传开始执行方法
         ot = new Date().getTime();   //设置上传开始时间
