@@ -10,8 +10,20 @@
     <script src="./bower_components/jquery/dist/jquery.js"></script>
 </head>
 <body>
-
+<input type="file" onchange="filechange(event)">
 <script>
+
+//    var file = null
+//    function filechange(e) {
+//        file = e.target.files[0];
+//        console.log(file);
+//        xhttp.upload({
+//            url: 'http://itrydo.com/',
+//            data: file
+//        }, function (data) {
+//            console.log('finish Data');
+//        })
+//    }
 //    xhttp.get({
 //        url: 'http://127.0.0.1:8888',
 //        headers: {
@@ -46,20 +58,22 @@
 //        }
 //    });
 
-xhttp.download({
-    url: 'http://xx.139.xdowns.com/2016/powerworddict.rar',
-//    timeout: 5000,
-    onEnd: function (isErr, data) {
-        console.log('finish', isErr);
-    }
-}, function (data) {
-    console.log(data);
-});
+//xhttp.download({
+//    url: 'http://xx.139.xdowns.com/2016/powerworddict.rar',
+////    timeout: 5000,
+//    onEnd: function (isErr, data) {
+//        console.log('finish', isErr);
+//    }
+//}, function (data) {
+//    console.log(data);
+//});
 
 //
 //$.post("http://127.0.0.1:8888",{aaa: 1},function(result){
 //    console.log(result);
 //});
+
+
 
 </script>
 </body>

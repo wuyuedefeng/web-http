@@ -33,12 +33,18 @@ module.exports = function (http) {
         config.method = "GET";
         http.request(config, onSuccess, onError);
     };
+    http.upload = function (config, onSuccess, onError) {
+        config.method = 'upload';
+        require('./requestUpload')(config, onSuccess, onError);
+    };
 
     http.request = function (config, onSuccess, onError) {
+        // 统一初始化config参数
         tool.handleConfig(config, onSuccess, onError);
-        console.log(config.onEnd);
+
         var xhr = require('./xhr')();
         config.xhr = xhr;
+
         xhr.onprogress = require('./progress')(config);
 
         xhr.onreadystatechange = require('./stateChange')(config);
@@ -73,7 +79,6 @@ module.exports = function (http) {
         }
 
         // .send(data):将请求发送到服务器。参数data是作为请求主体发送的数据，若不需要传数据，即data为null。服务器在收到响应后，响应的数据会自动填充XHR对象的属性。相关属性有responseText、responseXML、status、statusText、readyStatus
-        console.log(11, config.data, tool.objToParams(config.data));
         xhr.send(tool.objToParams(config.data) || null);
 
         //.abort():在接收到响应之前取消异步请求。
